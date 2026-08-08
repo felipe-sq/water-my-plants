@@ -2,8 +2,9 @@ node_modules/
 dist/
 build/
 
-.env
-.env.*
+# Every .env variant stays out of git, except the checked-in template.
+# The negation must come last, or a later broad pattern re-ignores it.
+.env*
 !.env.example
 
 .vercel
