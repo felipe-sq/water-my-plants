@@ -1,0 +1,13 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "water-my-plants",
+      // PORT is pinned so the API keeps 9000 (what the Vite proxy targets) even
+      // when the launcher injects a PORT of its own. Vite then keeps 5173.
+      "runtimeExecutable": "sh",
+      "runtimeArgs": ["-c", "PORT=9000 npm run dev"],
+      "port": 5173
+    }
+  ]
+}
