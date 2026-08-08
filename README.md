@@ -3,8 +3,14 @@
 A plant-care scheduler. Sign up, add your plants, and record how often each one
 needs watering.
 
-React frontend, Express + PostgreSQL API, deployable to Vercel as a single
+React frontend, Express + PostgreSQL API, deployed to Vercel as a single
 project.
+
+**Live app → https://water-my-plants-felipesqs-projects.vercel.app**
+
+Sign up with any username to try it; accounts only ever see their own plants.
+The database scales to zero when idle, so the first request after a quiet
+spell takes a few seconds to wake it.
 
 ---
 
