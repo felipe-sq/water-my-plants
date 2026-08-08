@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { Alert, Button, Card, Form, Spinner } from 'react-bootstrap'
+import { Alert, Button, Card, Form, Modal, Spinner } from 'react-bootstrap'
 import api, { errorMessage } from '../utils/api'
 import { useUser } from '../utils/UserContext'
 
@@ -7,7 +7,7 @@ import { useUser } from '../utils/UserContext'
 // and offered an Edit link next to each one. A person can now only see and
 // change their own profile, which is what the API allows too.
 export default function Profile() {
-  const { user, setUser } = useUser()
+  const { user, setUser, endSession } = useUser()
 
   const [profile, setProfile] = useState(user || {})
   const [password, setPassword] = useState('')
@@ -15,25 +15,27 @@ export default function Profile() {
   const [error, setError] = useState('')
   const [status, setStatus] = useState('')
   const [submitting, setSubmitting] = useState(false)
+  const [confirmingDelete, setConfirmingDelete] = useState(false)
+  const [deleting, setDeleting] = useState(false)
 
   useEffect(() => {
-    let cancelled = false
+    let canceled = false
     api
       .get('/users/me')
       .then(({ data }) => {
-        if (cancelled) return
+        if (canceled) return
         setProfile(data)
         setUser(data)
       })
       .catch((err) => {
-        if (!cancelled) setError(errorMessage(err, 'Could not load your profile'))
+        if (!canceled) setError(errorMessage(err, 'Could not load your profile'))
       })
       .finally(() => {
-        if (!cancelled) setLoading(false)
+        if (!canceled) setLoading(false)
       })
 
     return () => {
-      cancelled = true
+      canceled = true
     }
   }, [setUser])
 
@@ -71,6 +73,29 @@ export default function Profile() {
       setError(errorMessage(err, 'Could not update your profile'))
     } finally {
       setSubmitting(false)
+    }
+  }
+
+  const handleDelete = async () => {
+    setError('')
+    setStatus('')
+    setDeleting(true)
+
+    try {
+      // The API cascades to this account's plants, so nothing is left behind.
+      await api.delete('/users/me')
+
+      // Deleting an account is terminal, so drop the session and hard-reload
+      // the homepage. A client-side navigate loses a race here: clearing the
+      // user re-renders this route under RequireAuth, whose <Navigate> effect
+      // runs afterwards and bounces to /login — a sign-in form for an account
+      // that no longer exists.
+      endSession()
+      window.location.assign('/')
+    } catch (err) {
+      setError(errorMessage(err, 'Could not delete your account'))
+      setConfirmingDelete(false)
+      setDeleting(false)
     }
   }
 
@@ -158,7 +183,45 @@ export default function Profile() {
             {submitting ? <Spinner as="span" size="sm" animation="border" /> : 'Save'}
           </Button>
         </Form>
+
+        <hr className="my-4" />
+
+        <h3 className="h5">Delete account</h3>
+        <p className="text-muted">
+          This removes your account and every plant on it. It cannot be undone.
+        </p>
+        <Button
+          variant="outline-danger"
+          type="button"
+          onClick={() => setConfirmingDelete(true)}
+        >
+          Delete my account
+        </Button>
       </Card.Body>
+
+      <Modal show={confirmingDelete} onHide={() => setConfirmingDelete(false)} centered>
+        <Modal.Header closeButton>
+          <Modal.Title>Delete your account?</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <p className="mb-0">
+            {profile.username ? <strong>{profile.username}</strong> : 'Your account'} and all of
+            its plants will be permanently deleted. This cannot be undone.
+          </p>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button
+            variant="outline-secondary"
+            onClick={() => setConfirmingDelete(false)}
+            disabled={deleting}
+          >
+            Cancel
+          </Button>
+          <Button variant="danger" onClick={handleDelete} disabled={deleting}>
+            {deleting ? <Spinner as="span" size="sm" animation="border" /> : 'Delete account'}
+          </Button>
+        </Modal.Footer>
+      </Modal>
     </Card>
   )
 }

@@ -11,6 +11,14 @@ export function UserProvider({ children }) {
     setUser(nextUser)
   }, [])
 
+  // Drops the local session without talking to the API. Deleting an account
+  // takes this path: the row is already gone, so a /users/logout call would
+  // only 401 against a token whose user no longer exists.
+  const endSession = useCallback(() => {
+    clearSession()
+    setUser(null)
+  }, [])
+
   const logout = useCallback(async () => {
     try {
       // Best effort: tells the API to revoke the token server-side. The local
@@ -20,14 +28,13 @@ export function UserProvider({ children }) {
     } catch {
       // ignored on purpose
     } finally {
-      clearSession()
-      setUser(null)
+      endSession()
     }
-  }, [])
+  }, [endSession])
 
   const value = useMemo(
-    () => ({ user, setUser, login, logout, isAuthenticated: Boolean(user) }),
-    [user, login, logout]
+    () => ({ user, setUser, login, logout, endSession, isAuthenticated: Boolean(user) }),
+    [user, login, logout, endSession]
   )
 
   return <UserContext.Provider value={value}>{children}</UserContext.Provider>
