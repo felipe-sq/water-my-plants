@@ -1,0 +1,44 @@
+:root {
+  --wmp-green: #6b8f50;
+  --wmp-cream: #ffefd5;
+}
+
+body {
+  margin: 0;
+  background-color: #f7f7f4;
+  font-family: 'Open Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+.wmp-header {
+  background-color: var(--wmp-cream);
+  border-bottom: 4px solid var(--wmp-green);
+}
+
+.wmp-title {
+  font-family: 'Amatic SC', 'Open Sans', cursive;
+  font-size: clamp(2.5rem, 8vw, 4rem);
+  color: var(--wmp-green);
+  letter-spacing: 0.02em;
+}
+
+.wmp-card {
+  border: 1px solid rgb(210, 210, 210);
+  border-radius: 6px;
+  box-shadow: 0 1px 6px -2px rgb(128, 127, 127);
+  background-color: #fff;
+  text-align: center;
+}
+
+.wmp-card .card-img-top {
+  aspect-ratio: 3 / 2;
+  object-fit: cover;
+}
+
+/* Bootstrap's Nav.Link renders a <button> here so logout is keyboard- and
+   screen-reader-addressable; this strips the default button chrome. */
+.navbar-nav .nav-link[type='button'] {
+  background: none;
+  border: none;
+  padding-inline: 0.5rem;
+}
