@@ -17,7 +17,8 @@
     "migrate": "knex migrate:latest",
     "rollback": "knex migrate:rollback",
     "seed": "knex seed:run",
-    "test": "cross-env NODE_ENV=testing vitest run"
+    "test": "cross-env NODE_ENV=testing vitest run",
+    "test:integration": "cross-env NODE_ENV=testing vitest run --config vitest.integration.config.mjs"
   },
   "dependencies": {
     "bcryptjs": "^3.0.3",

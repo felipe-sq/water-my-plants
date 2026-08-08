@@ -84,15 +84,24 @@ The seeded account is `a1stein` / `password`.
 
 ## Testing
 
+Unit tests — routing, request validation, the auth gate, and token issuance.
+No database required:
+
 ```bash
 npm test
 ```
 
-The suite covers routing, request validation, and the authentication gate —
-every path that rejects a request before it reaches Postgres. The
-database-backed happy paths are not covered, because the project has no
-in-memory Postgres substitute; running those would need a scratch database and
-a `TESTING_DATABASE_URL` pointing at it.
+Integration tests — registration, login, the full plant CRUD cycle, profile
+updates, logout revocation, and cross-user isolation, all against real
+Postgres. These need `TESTING_DATABASE_URL` pointing at a scratch database,
+and they truncate its tables between tests:
+
+```bash
+npm run test:integration
+```
+
+`createdb water_my_plants_test` is enough to set that database up; the suite
+runs the migrations itself.
 
 ## Deploying to Vercel
 
@@ -158,6 +167,11 @@ All responses are JSON. Authenticated routes expect `Authorization: Bearer <toke
 - Passwords now have a minimum length, and usernames are unique at the database
   level (duplicate registration returns 409 rather than creating a second
   account).
+- Tokens carry a random `jti` claim. Without one, the payload was fully
+  determined by the user and `iat` — which has second resolution — so logging
+  out and back in within the same second reissued the exact token that logout
+  had just added to the revocation list, locking the account out until the
+  clock ticked over.
 
 **Broken code**
 
