@@ -8,6 +8,10 @@ export default defineConfig({
     // alongside the code they exercise.
     globals: true,
     include: ['server/**/*.test.js'],
+    // *.integration.test.js also matches the include glob, and those tests
+    // need a live Postgres. Keeping them out is what lets `npm test` run on a
+    // machine with no database. They run via `npm run test:integration`.
+    exclude: ['**/node_modules/**', 'server/**/*.integration.test.js'],
     setupFiles: ['./server/__tests__/setup.js'],
   },
 })
