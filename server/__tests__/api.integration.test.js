@@ -165,7 +165,7 @@ describe('plant CRUD', () => {
   })
 })
 
-// The single most important behaviour in this rebuild: the 2021 schema had no
+// The single most important behavior in this rebuild: the 2021 schema had no
 // owner column, so every account shared one global plant list.
 describe('cross-user isolation', () => {
   let tokenA

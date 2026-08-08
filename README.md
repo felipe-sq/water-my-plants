@@ -21,7 +21,7 @@ a Create React App frontend and an Express/Knex backend on Heroku. Heroku's
 free tier was retired in November 2022 and took the API and its database with
 it, leaving the deployed frontend unable to log anyone in.
 
-This repository consolidates both halves into one project, modernises the
+This repository consolidates both halves into one project, modernizes the
 stack, and repairs the defects that kept the original from working. See
 [What changed](#what-changed) for the full list.
 
@@ -188,7 +188,7 @@ All responses are JSON. Authenticated routes expect `Authorization: Bearer <toke
   and `DELETE` called `Shouts.remove` — three identifiers left over from an
   unrelated scaffold, none of which existed in the project.
 - `GET /api/users/logout` was declared after `GET /api/users/:id`, so the
-  parameterised route swallowed it. This is the 500 the old `App.js` mentions
+  parameterized route swallowed it. This is the 500 the old `App.js` mentions
   in a commented-out block.
 - `update()` in both models called an undefined `get()`.
 - The seed inserted a plaintext password, so the seeded account could never log

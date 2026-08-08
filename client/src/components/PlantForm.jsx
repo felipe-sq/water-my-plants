@@ -10,7 +10,7 @@ const emptyPlant = { nickname: '', species: '', h2o_frequency: 1, h2o_unit: 'day
 
 // One component for both routes. The 2021 version had AddNewPlant and
 // UpdatePlant as near-identical files that had drifted apart — UpdatePlant
-// used camelCase field names the API never recognised.
+// used camelCase field names the API never recognized.
 export default function PlantForm() {
   const { id } = useParams()
   const isEdit = Boolean(id)
@@ -25,21 +25,21 @@ export default function PlantForm() {
   useEffect(() => {
     if (!isEdit) return
 
-    let cancelled = false
+    let canceled = false
     api
       .get(`/plants/${id}`)
       .then(({ data }) => {
-        if (!cancelled) setPlant(data)
+        if (!canceled) setPlant(data)
       })
       .catch((err) => {
-        if (!cancelled) setError(errorMessage(err, 'Could not load that plant'))
+        if (!canceled) setError(errorMessage(err, 'Could not load that plant'))
       })
       .finally(() => {
-        if (!cancelled) setLoading(false)
+        if (!canceled) setLoading(false)
       })
 
     return () => {
-      cancelled = true
+      canceled = true
     }
   }, [id, isEdit])
 

@@ -55,7 +55,7 @@ router.post('/login', validateCredentials, async (req, res, next) => {
   }
 })
 
-// Declared before the parameterised routes below. In the original router the
+// Declared before the parameterized routes below. In the original router the
 // logout handler sat after `GET /:id`, so `/logout` was swallowed as an id.
 router.post('/logout', requireAuth, async (req, res, next) => {
   try {
