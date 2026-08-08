@@ -18,13 +18,17 @@ module.exports = {
   },
 
   // Hosted Postgres (Neon, Supabase, RDS) presents a publicly trusted
-  // certificate, so TLS is verified normally against the system CA store.
-  // Append `?sslmode=require` to DATABASE_URL to force TLS on the wire.
+  // certificate, so TLS is verified against the system CA store.
+  //
+  // rejectUnauthorized is set explicitly rather than left to the connection
+  // string: node-postgres is migrating `sslmode=require` to libpq semantics,
+  // where it means "encrypt but do not verify the certificate". Stating the
+  // intent here keeps verification on through that change.
   production: {
     ...sharedConfig,
     connection: {
       connectionString: process.env.DATABASE_URL,
-      ssl: true,
+      ssl: { rejectUnauthorized: true },
     },
     pool: { min: 0, max: 10 },
   },
